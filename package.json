@@ -1,0 +1,25 @@
+{
+  "name": "smap-nfc-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "*"
+  ],
+  "devDependencies": {
+    "@graphql-codegen/cli": "^3.0.0",
+    "@graphql-codegen/typescript": "^3.0.0",
+    "@graphql-codegen/typescript-resolvers": "^3.0.0",
+    "foreman": "^3.0.1",
+    "graphql-codegen": "^0.4.0",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "graphql": "^16.6.0"
+  },
+  "scripts": {
+    "codegen": "yarn graphql-code-generator --config ./codegen.ts",
+    "dev": "yarn nf start"
+  }
+}

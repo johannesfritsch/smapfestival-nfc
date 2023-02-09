@@ -1,0 +1,47 @@
+input NfcPlacementInput {
+  tagUid: ID!
+}
+input CreateNfcReaderInput {
+  name: String!
+}
+input NfcRemovalInput {
+  tagUid: ID!
+}
+type NfcReader {
+  id: ID!
+  name: String!
+  currentTag: NfcTag
+}
+type NfcTag {
+  id: ID!
+}
+type Query {
+  readers: [NfcReader!]!
+}
+type NfcReaderCreation {
+  token: String!
+  reader: NfcReader!
+}
+input LoginInput {
+  email: String!
+  password: String!
+}
+type User {
+  id: ID!
+  email: String!
+  name: String!
+}
+type Session {
+  token: String!
+  user: User!
+}
+type Mutation {
+  login(input: LoginInput!): Session!
+  submitNfcPlacement(input: NfcPlacementInput!): NfcReader!
+  submitNfcRemoval(input: NfcRemovalInput!): NfcReader!
+  createNfcReader(input: CreateNfcReaderInput!): NfcReaderCreation!
+  deleteNfcReader(id: ID!): Boolean!
+}
+type Subscription {
+  nfcReaderUpdated: NfcReader!
+}
