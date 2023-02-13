@@ -1,9 +1,11 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { Reader, Entry, Guets } from '@prisma/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -12,10 +14,45 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: any;
+};
+
+export type CreateEntryInput = {
+  guestId: Scalars['ID'];
+  readerId: Scalars['ID'];
+};
+
+export type CreateGuestInput = {
+  name: Scalars['String'];
+  tagUid?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateNfcReaderInput = {
   name: Scalars['String'];
+  tracksEntries?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type EntriesPaginationInput = {
+  after?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type EntryCreatedWhereInput = {
+  readerIds?: InputMaybe<Array<Scalars['ID']>>;
+};
+
+export type EntryType = {
+  __typename?: 'EntryType';
+  createdAt: Scalars['DateTime'];
+  guest: GuestType;
+  id: Scalars['ID'];
+  reader: NfcReader;
+};
+
+export type GuestType = {
+  __typename?: 'GuestType';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  tagUid?: Maybe<Scalars['ID']>;
 };
 
 export type LoginInput = {
@@ -25,16 +62,43 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createEntry: EntryType;
+  createGuest: GuestType;
   createNfcReader: NfcReaderCreation;
+  deleteEntry: Scalars['Boolean'];
+  deleteGuest: Scalars['Boolean'];
   deleteNfcReader: Scalars['Boolean'];
   login: Session;
   submitNfcPlacement: NfcReader;
+  submitNfcReaderKeepAlive: NfcReader;
   submitNfcRemoval: NfcReader;
+  updateGuest: GuestType;
+  updateNfcReader: NfcReader;
+};
+
+
+export type MutationCreateEntryArgs = {
+  input: CreateEntryInput;
+};
+
+
+export type MutationCreateGuestArgs = {
+  input: CreateGuestInput;
 };
 
 
 export type MutationCreateNfcReaderArgs = {
   input: CreateNfcReaderInput;
+};
+
+
+export type MutationDeleteEntryArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteGuestArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -57,6 +121,16 @@ export type MutationSubmitNfcRemovalArgs = {
   input: NfcRemovalInput;
 };
 
+
+export type MutationUpdateGuestArgs = {
+  input: UpdateGuestInput;
+};
+
+
+export type MutationUpdateNfcReaderArgs = {
+  input: UpdateNfcReaderInput;
+};
+
 export type NfcPlacementInput = {
   tagUid: Scalars['ID'];
 };
@@ -65,7 +139,9 @@ export type NfcReader = {
   __typename?: 'NfcReader';
   currentTag?: Maybe<NfcTag>;
   id: Scalars['ID'];
+  lastSeenAt?: Maybe<Scalars['DateTime']>;
   name: Scalars['String'];
+  tracksEntries: Scalars['Boolean'];
 };
 
 export type NfcReaderCreation = {
@@ -74,18 +150,35 @@ export type NfcReaderCreation = {
   token: Scalars['String'];
 };
 
+export enum NfcReaderState {
+  Offline = 'OFFLINE',
+  Online = 'ONLINE'
+}
+
+export type NfcReaderUpdatedWhereInput = {
+  readerIds?: InputMaybe<Array<Scalars['ID']>>;
+};
+
 export type NfcRemovalInput = {
   tagUid: Scalars['ID'];
 };
 
 export type NfcTag = {
   __typename?: 'NfcTag';
+  guest?: Maybe<GuestType>;
   id: Scalars['ID'];
 };
 
 export type Query = {
   __typename?: 'Query';
+  entries: Array<EntryType>;
+  guests: Array<GuestType>;
   readers: Array<NfcReader>;
+};
+
+
+export type QueryEntriesArgs = {
+  pagination?: InputMaybe<EntriesPaginationInput>;
 };
 
 export type Session = {
@@ -96,7 +189,31 @@ export type Session = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  entryCreated: EntryType;
+  guestUpdated: GuestType;
   nfcReaderUpdated: NfcReader;
+};
+
+
+export type SubscriptionEntryCreatedArgs = {
+  where?: InputMaybe<EntryCreatedWhereInput>;
+};
+
+
+export type SubscriptionNfcReaderUpdatedArgs = {
+  where?: InputMaybe<NfcReaderUpdatedWhereInput>;
+};
+
+export type UpdateGuestInput = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  tagUid?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateNfcReaderInput = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  tracksEntries?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type User = {
@@ -176,53 +293,102 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CreateEntryInput: CreateEntryInput;
+  CreateGuestInput: CreateGuestInput;
   CreateNfcReaderInput: CreateNfcReaderInput;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  EntriesPaginationInput: EntriesPaginationInput;
+  EntryCreatedWhereInput: EntryCreatedWhereInput;
+  EntryType: ResolverTypeWrapper<Entry>;
+  GuestType: ResolverTypeWrapper<Guets>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   LoginInput: LoginInput;
   Mutation: ResolverTypeWrapper<{}>;
   NfcPlacementInput: NfcPlacementInput;
-  NfcReader: ResolverTypeWrapper<NfcReader>;
-  NfcReaderCreation: ResolverTypeWrapper<NfcReaderCreation>;
+  NfcReader: ResolverTypeWrapper<Reader>;
+  NfcReaderCreation: ResolverTypeWrapper<Omit<NfcReaderCreation, 'reader'> & { reader: ResolversTypes['NfcReader'] }>;
+  NfcReaderState: NfcReaderState;
+  NfcReaderUpdatedWhereInput: NfcReaderUpdatedWhereInput;
   NfcRemovalInput: NfcRemovalInput;
-  NfcTag: ResolverTypeWrapper<NfcTag>;
+  NfcTag: ResolverTypeWrapper<Omit<NfcTag, 'guest'> & { guest?: Maybe<ResolversTypes['GuestType']> }>;
   Query: ResolverTypeWrapper<{}>;
   Session: ResolverTypeWrapper<Session>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
+  UpdateGuestInput: UpdateGuestInput;
+  UpdateNfcReaderInput: UpdateNfcReaderInput;
   User: ResolverTypeWrapper<User>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  CreateEntryInput: CreateEntryInput;
+  CreateGuestInput: CreateGuestInput;
   CreateNfcReaderInput: CreateNfcReaderInput;
+  DateTime: Scalars['DateTime'];
+  EntriesPaginationInput: EntriesPaginationInput;
+  EntryCreatedWhereInput: EntryCreatedWhereInput;
+  EntryType: Entry;
+  GuestType: Guets;
   ID: Scalars['ID'];
   LoginInput: LoginInput;
   Mutation: {};
   NfcPlacementInput: NfcPlacementInput;
-  NfcReader: NfcReader;
-  NfcReaderCreation: NfcReaderCreation;
+  NfcReader: Reader;
+  NfcReaderCreation: Omit<NfcReaderCreation, 'reader'> & { reader: ResolversParentTypes['NfcReader'] };
+  NfcReaderUpdatedWhereInput: NfcReaderUpdatedWhereInput;
   NfcRemovalInput: NfcRemovalInput;
-  NfcTag: NfcTag;
+  NfcTag: Omit<NfcTag, 'guest'> & { guest?: Maybe<ResolversParentTypes['GuestType']> };
   Query: {};
   Session: Session;
   String: Scalars['String'];
   Subscription: {};
+  UpdateGuestInput: UpdateGuestInput;
+  UpdateNfcReaderInput: UpdateNfcReaderInput;
   User: User;
 };
 
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
+
+export type EntryTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['EntryType'] = ResolversParentTypes['EntryType']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  guest?: Resolver<ResolversTypes['GuestType'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  reader?: Resolver<ResolversTypes['NfcReader'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GuestTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['GuestType'] = ResolversParentTypes['GuestType']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tagUid?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createEntry?: Resolver<ResolversTypes['EntryType'], ParentType, ContextType, RequireFields<MutationCreateEntryArgs, 'input'>>;
+  createGuest?: Resolver<ResolversTypes['GuestType'], ParentType, ContextType, RequireFields<MutationCreateGuestArgs, 'input'>>;
   createNfcReader?: Resolver<ResolversTypes['NfcReaderCreation'], ParentType, ContextType, RequireFields<MutationCreateNfcReaderArgs, 'input'>>;
+  deleteEntry?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteEntryArgs, 'id'>>;
+  deleteGuest?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteGuestArgs, 'id'>>;
   deleteNfcReader?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteNfcReaderArgs, 'id'>>;
   login?: Resolver<ResolversTypes['Session'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
   submitNfcPlacement?: Resolver<ResolversTypes['NfcReader'], ParentType, ContextType, RequireFields<MutationSubmitNfcPlacementArgs, 'input'>>;
+  submitNfcReaderKeepAlive?: Resolver<ResolversTypes['NfcReader'], ParentType, ContextType>;
   submitNfcRemoval?: Resolver<ResolversTypes['NfcReader'], ParentType, ContextType, RequireFields<MutationSubmitNfcRemovalArgs, 'input'>>;
+  updateGuest?: Resolver<ResolversTypes['GuestType'], ParentType, ContextType, RequireFields<MutationUpdateGuestArgs, 'input'>>;
+  updateNfcReader?: Resolver<ResolversTypes['NfcReader'], ParentType, ContextType, RequireFields<MutationUpdateNfcReaderArgs, 'input'>>;
 };
 
 export type NfcReaderResolvers<ContextType = any, ParentType extends ResolversParentTypes['NfcReader'] = ResolversParentTypes['NfcReader']> = {
   currentTag?: Resolver<Maybe<ResolversTypes['NfcTag']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  lastSeenAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tracksEntries?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -233,11 +399,14 @@ export type NfcReaderCreationResolvers<ContextType = any, ParentType extends Res
 };
 
 export type NfcTagResolvers<ContextType = any, ParentType extends ResolversParentTypes['NfcTag'] = ResolversParentTypes['NfcTag']> = {
+  guest?: Resolver<Maybe<ResolversTypes['GuestType']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  entries?: Resolver<Array<ResolversTypes['EntryType']>, ParentType, ContextType, Partial<QueryEntriesArgs>>;
+  guests?: Resolver<Array<ResolversTypes['GuestType']>, ParentType, ContextType>;
   readers?: Resolver<Array<ResolversTypes['NfcReader']>, ParentType, ContextType>;
 };
 
@@ -248,7 +417,9 @@ export type SessionResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
-  nfcReaderUpdated?: SubscriptionResolver<ResolversTypes['NfcReader'], "nfcReaderUpdated", ParentType, ContextType>;
+  entryCreated?: SubscriptionResolver<ResolversTypes['EntryType'], "entryCreated", ParentType, ContextType, Partial<SubscriptionEntryCreatedArgs>>;
+  guestUpdated?: SubscriptionResolver<ResolversTypes['GuestType'], "guestUpdated", ParentType, ContextType>;
+  nfcReaderUpdated?: SubscriptionResolver<ResolversTypes['NfcReader'], "nfcReaderUpdated", ParentType, ContextType, Partial<SubscriptionNfcReaderUpdatedArgs>>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
@@ -259,6 +430,9 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  DateTime?: GraphQLScalarType;
+  EntryType?: EntryTypeResolvers<ContextType>;
+  GuestType?: GuestTypeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   NfcReader?: NfcReaderResolvers<ContextType>;
   NfcReaderCreation?: NfcReaderCreationResolvers<ContextType>;

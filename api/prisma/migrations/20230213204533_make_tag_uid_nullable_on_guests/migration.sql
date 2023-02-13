@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Guest" ALTER COLUMN "tagUid" DROP NOT NULL;

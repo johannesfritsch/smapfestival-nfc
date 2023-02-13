@@ -1,47 +1,130 @@
+scalar DateTime
+
 input NfcPlacementInput {
   tagUid: ID!
 }
+
 input CreateNfcReaderInput {
   name: String!
+  tracksEntries: Boolean
 }
+
+input UpdateNfcReaderInput {
+  id: ID!
+  name: String!
+  tracksEntries: Boolean
+}
+
 input NfcRemovalInput {
   tagUid: ID!
 }
+
+enum NfcReaderState {
+  ONLINE
+  OFFLINE
+}
+
 type NfcReader {
   id: ID!
   name: String!
+  tracksEntries: Boolean!
   currentTag: NfcTag
+  lastSeenAt: DateTime
 }
+
 type NfcTag {
   id: ID!
+  guest: GuestType
 }
+
+type GuestType {
+  id: ID!
+  name: String!
+  tagUid: ID
+}
+
+type EntryType {
+  id: ID!
+  guest: GuestType!
+  reader: NfcReader!
+  createdAt: DateTime!
+}
+
+input EntriesPaginationInput {
+  after: DateTime
+}
+
 type Query {
   readers: [NfcReader!]!
+  guests: [GuestType!]!
+  entries(pagination: EntriesPaginationInput): [EntryType!]!
 }
+
 type NfcReaderCreation {
   token: String!
   reader: NfcReader!
 }
+
 input LoginInput {
   email: String!
   password: String!
 }
+
 type User {
   id: ID!
   email: String!
   name: String!
 }
+
 type Session {
   token: String!
   user: User!
 }
+
+input CreateEntryInput {
+  guestId: ID!
+  readerId: ID!
+}
+
+input CreateGuestInput {
+  name: String!
+  tagUid: String
+}
+
+input UpdateGuestInput {
+  id: ID!
+  name: String!
+  tagUid: String
+}
+
 type Mutation {
   login(input: LoginInput!): Session!
+  submitNfcReaderKeepAlive: NfcReader!
   submitNfcPlacement(input: NfcPlacementInput!): NfcReader!
   submitNfcRemoval(input: NfcRemovalInput!): NfcReader!
+  
   createNfcReader(input: CreateNfcReaderInput!): NfcReaderCreation!
+  updateNfcReader(input: UpdateNfcReaderInput!): NfcReader!
   deleteNfcReader(id: ID!): Boolean!
+
+  createGuest(input: CreateGuestInput!): GuestType!
+  updateGuest(input: UpdateGuestInput!): GuestType!
+  deleteGuest(id: ID!): Boolean!
+  
+  createEntry(input: CreateEntryInput!): EntryType!
+  deleteEntry(id: ID!): Boolean!
 }
+
+input NfcReaderUpdatedWhereInput {
+  readerIds: [ID!]
+}
+
+input EntryCreatedWhereInput {
+  readerIds: [ID!]
+}
+
 type Subscription {
-  nfcReaderUpdated: NfcReader!
+  nfcReaderUpdated(where: NfcReaderUpdatedWhereInput): NfcReader!
+  entryCreated(where: EntryCreatedWhereInput): EntryType!
+  guestUpdated: GuestType!
 }
