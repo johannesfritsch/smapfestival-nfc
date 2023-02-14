@@ -163,6 +163,8 @@ export const TagUidField = ({
     NfcReaderUpdatedSubscriptionVariables
   >(SUBSCRIBE_READER_UPDATE);
 
+  const usableReaders = data?.readers.filter((reader) => reader.currentTag && !reader.currentTag.guest) || [];
+
   return (
     <div className="sm:col-span-6 pb-24">
       <label htmlFor={name} className="block text-sm font-medium text-gray-700">
@@ -194,9 +196,10 @@ export const TagUidField = ({
         </button>
         {open && (
           <div className="absolute z-10 mt-1 max-h-32 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-            {data?.readers
-              .filter((reader) => reader.currentTag && !reader.currentTag.guest)
-              .map((reader) => (
+            {usableReaders.length < 1 && (
+              <div className="relative cursor-default select-none py-2 pl-3 pr-9 inline-block italic text-gray-700 flex-shrink-0 rounded-full">No unused tags found. Please put one on a reader.</div>
+            )}
+            {usableReaders.map((reader) => (
                 <div
                   key={reader.id}
                   className={classNames(
