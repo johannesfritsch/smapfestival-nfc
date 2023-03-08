@@ -54,8 +54,12 @@ input EntriesPaginationInput {
   after: DateTime
 }
 
+input ReadersFilterInput {
+  onlyEntry: Boolean
+}
+
 type Query {
-  readers: [NfcReader!]!
+  readers(filter: ReadersFilterInput): [NfcReader!]!
   guests: [GuestType!]!
   entries(pagination: EntriesPaginationInput): [EntryType!]!
 }

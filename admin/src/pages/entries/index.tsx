@@ -12,6 +12,7 @@ import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import React, { useEffect } from "react";
 import { NFC_READER_FRAGMENT } from "../readers";
 import { GUEST_FRAGMENT } from "../guests";
+import EmptyState from "@/components/EmptyState";
 
 export const ENTRY_FRAGMENT = gql`
   fragment EntryFragment on EntryType {
@@ -43,7 +44,7 @@ const DELETE_ENTRY = gql`
   }
 `;
 
-const SUBSCRIBE_ENTRY_CREATED = gql`
+export const SUBSCRIBE_ENTRY_CREATED = gql`
   ${ENTRY_FRAGMENT}
   subscription EntryCreated {
     entryCreated {
@@ -94,7 +95,9 @@ const Index = () => {
 
   return (
     <PageLayout>
-      <Section
+      {data && data.entries.length > 0 ? (
+        <>
+        <Section
         title="Entries"
         description="Here you can configure the connected entries."
       />
@@ -119,6 +122,10 @@ const Index = () => {
           })
         }
       />
+        </>
+      ) : (
+        <EmptyState title="No entries yet" description="Add a guest and scan it's NFC badge on an entry reader to create entries." />
+      )}
     </PageLayout>
   );
 };

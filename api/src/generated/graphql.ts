@@ -181,6 +181,15 @@ export type QueryEntriesArgs = {
   pagination?: InputMaybe<EntriesPaginationInput>;
 };
 
+
+export type QueryReadersArgs = {
+  filter?: InputMaybe<ReadersFilterInput>;
+};
+
+export type ReadersFilterInput = {
+  onlyEntry?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type Session = {
   __typename?: 'Session';
   token: Scalars['String'];
@@ -312,6 +321,7 @@ export type ResolversTypes = {
   NfcRemovalInput: NfcRemovalInput;
   NfcTag: ResolverTypeWrapper<Omit<NfcTag, 'guest'> & { guest?: Maybe<ResolversTypes['GuestType']> }>;
   Query: ResolverTypeWrapper<{}>;
+  ReadersFilterInput: ReadersFilterInput;
   Session: ResolverTypeWrapper<Session>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
@@ -341,6 +351,7 @@ export type ResolversParentTypes = {
   NfcRemovalInput: NfcRemovalInput;
   NfcTag: Omit<NfcTag, 'guest'> & { guest?: Maybe<ResolversParentTypes['GuestType']> };
   Query: {};
+  ReadersFilterInput: ReadersFilterInput;
   Session: Session;
   String: Scalars['String'];
   Subscription: {};
@@ -407,7 +418,7 @@ export type NfcTagResolvers<ContextType = any, ParentType extends ResolversParen
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   entries?: Resolver<Array<ResolversTypes['EntryType']>, ParentType, ContextType, Partial<QueryEntriesArgs>>;
   guests?: Resolver<Array<ResolversTypes['GuestType']>, ParentType, ContextType>;
-  readers?: Resolver<Array<ResolversTypes['NfcReader']>, ParentType, ContextType>;
+  readers?: Resolver<Array<ResolversTypes['NfcReader']>, ParentType, ContextType, Partial<QueryReadersArgs>>;
 };
 
 export type SessionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Session'] = ResolversParentTypes['Session']> = {

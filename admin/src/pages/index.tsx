@@ -5,25 +5,25 @@ import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 
 const stats = [
   {
-    name: "Total Subscribers",
-    stat: "71,897",
-    previousStat: "70,946",
-    change: "12%",
+    name: "Tag Rate",
+    stat: "45",
+    previousStat: "50",
+    change: "95%",
     changeType: "increase",
   },
   {
-    name: "Avg. Open Rate",
-    stat: "58.16%",
-    previousStat: "56.14%",
-    change: "2.02%",
+    name: "Guests inside",
+    stat: "190",
+    previousStat: "215",
+    change: "90%",
     changeType: "increase",
   },
   {
-    name: "Avg. Click Rate",
-    stat: "24.57%",
-    previousStat: "28.62%",
-    change: "4.05%",
-    changeType: "decrease",
+    name: "Total entries",
+    stat: "405",
+    previousStat: "405",
+    change: "100%",
+    changeType: "increase",
   },
 ];
 

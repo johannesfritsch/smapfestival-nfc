@@ -177,6 +177,15 @@ export type QueryEntriesArgs = {
   pagination?: InputMaybe<EntriesPaginationInput>;
 };
 
+
+export type QueryReadersArgs = {
+  filter?: InputMaybe<ReadersFilterInput>;
+};
+
+export type ReadersFilterInput = {
+  onlyEntry?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type Session = {
   __typename?: 'Session';
   token: Scalars['String'];
@@ -319,3 +328,17 @@ export type DeleteReaderMutationVariables = Exact<{
 
 
 export type DeleteReaderMutation = { __typename?: 'Mutation', deleteNfcReader: boolean };
+
+export type GuestEntryCreatedFragmentFragment = { __typename?: 'EntryType', id: string, createdAt: any, guest: { __typename?: 'GuestType', id: string, name: string, tagUid?: string | null } };
+
+export type GuestEntryCreatedSubscriptionVariables = Exact<{
+  readerIds: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type GuestEntryCreatedSubscription = { __typename?: 'Subscription', entryCreated: { __typename?: 'EntryType', id: string, createdAt: any, guest: { __typename?: 'GuestType', id: string, name: string, tagUid?: string | null } } };
+
+export type GetEntryReadersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetEntryReadersQuery = { __typename?: 'Query', readers: Array<{ __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string } | null } | null }> };

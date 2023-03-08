@@ -1,4 +1,5 @@
 import Button from "@/components/Button";
+import EmptyState from "@/components/EmptyState";
 import PageLayout from "@/components/PageLayout";
 import Section from "@/components/Section";
 import Table, { ReaderTableRow } from "@/components/Table";
@@ -78,6 +79,11 @@ const ReadersPage = () => {
     }
   };
 
+  const handleAdd = async () => {
+    setSelectedReader(undefined);
+    setEditModalOpen(true);
+  };
+
   const handleEdit = async (reader: NfcReader) => {
     setSelectedReader(reader);
     setEditModalOpen(true);
@@ -93,30 +99,32 @@ const ReadersPage = () => {
           setEditModalOpen(false);
         }}
       />
-      <Section
-        title="Readers"
-        description="Here you can configure the connected readers."
-        button={
-          <Button
-            caption="Connect new reader"
-            onClick={() => {
-              setSelectedReader(undefined);
-              setEditModalOpen(true);
-            }}
+      {data && data.readers.length > 0 ? (
+        <>
+          <Section
+            title="Readers"
+            description="Here you can configure the connected readers."
+            button={<Button caption="Connect new reader" onClick={handleAdd} />}
           />
-        }
-      />
-      <Table headings={["Name", "Entry reader", "Tag", "Action"]}>
-        {data?.readers.map((reader, index) => (
-          <ReaderTableRow
-            key={reader.id}
-            reader={reader}
-            odd={index % 2 === 0}
-            onDelete={() => handleDelete(reader)}
-            onEdit={() => handleEdit(reader)}
-          />
-        ))}
-      </Table>
+          <Table headings={["Name", "Entry reader", "Tag", "Action"]}>
+            {data?.readers.map((reader, index) => (
+              <ReaderTableRow
+                key={reader.id}
+                reader={reader}
+                odd={index % 2 === 0}
+                onDelete={() => handleDelete(reader)}
+                onEdit={() => handleEdit(reader)}
+              />
+            ))}
+          </Table>
+        </>
+      ) : (
+        <EmptyState
+          title="No readers connected"
+          description="Create a first reader and configure the reader daemon with the token."
+          action={{ label: "Connect first reader", onClick: handleAdd }}
+        />
+      )}
     </PageLayout>
   );
 };

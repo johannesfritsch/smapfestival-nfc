@@ -49,13 +49,16 @@ export default {
     },
   },
   Query: {
-    readers: async (_, {}, ctx) => {
+    readers: async (_, { filter }, ctx) => {
       if (ctx.type !== "USER")
         throw new GraphQLError("You're not a user", {
           extensions: { code: "UNAUTHORIZED" },
         });
 
-      return await db.reader.findMany({ orderBy: { name: "asc" } });
+      return await db.reader.findMany({
+        orderBy: { name: "asc" },
+        ...(filter?.onlyEntry ? { where: { tracksEntries: true } } : {}),
+      });
     },
     guests: async (_, {}, ctx) => {
       if (ctx.type !== "USER")
@@ -70,8 +73,6 @@ export default {
         throw new GraphQLError("You're not a user", {
           extensions: { code: "UNAUTHORIZED" },
         });
-
-      console.log(pagination);
 
       return await db.entry.findMany({
         orderBy: { createdAt: "desc" },

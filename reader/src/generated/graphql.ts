@@ -177,6 +177,15 @@ export type QueryEntriesArgs = {
   pagination?: InputMaybe<EntriesPaginationInput>;
 };
 
+
+export type QueryReadersArgs = {
+  filter?: InputMaybe<ReadersFilterInput>;
+};
+
+export type ReadersFilterInput = {
+  onlyEntry?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type Session = {
   __typename?: 'Session';
   token: Scalars['String'];

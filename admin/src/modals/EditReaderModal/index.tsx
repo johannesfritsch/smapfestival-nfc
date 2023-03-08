@@ -20,7 +20,7 @@ export type EditReaderModalProps = {
 };
 
 const EditReaderModal = ({ reader, open, onClose }: EditReaderModalProps) => {
-  const [workingCopy, setWorkingCopy] = useState<Partial<NfcReader>>();
+  const [workingCopy, setWorkingCopy] = useState<Partial<NfcReader>>({ name: "", tracksEntries: false });
 
   useEffect(() => {
     if (reader) setWorkingCopy(mergeDeepLeft({}, reader));

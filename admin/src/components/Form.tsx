@@ -17,6 +17,7 @@ export type FormProps = PropsWithChildren<{
   onCancel: () => void;
   submitCaption?: string;
   cancelCaption?: string;
+  disabled?: boolean;
 }>;
 
 export default function Form({
@@ -25,6 +26,7 @@ export default function Form({
   children,
   cancelCaption,
   submitCaption,
+  disabled,
 }: FormProps) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -39,7 +41,7 @@ export default function Form({
     >
       <div className="space-y-8 divide-y divide-gray-200">
         <div className="py-6">
-          <div className=" grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+          <div className=" grid grid-cols-1 gap-y-6 gap-x-4 ">
             {children}
           </div>
         </div>
@@ -47,8 +49,9 @@ export default function Form({
 
       <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3 pt-4">
         <button
+          disabled={disabled}
           type="submit"
-          className="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm"
+          className={classNames("inline-flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:col-start-2 sm:text-sm", !disabled ? "bg-indigo-600 focus:ring-indigo-500 hover:bg-indigo-700" : "bg-gray-200 focus:ring-gray-200 hover:bg-gray-200")}
         >
           {submitCaption || "Submit"}
         </button>

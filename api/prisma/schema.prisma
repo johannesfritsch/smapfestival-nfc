@@ -47,4 +47,5 @@ model Entry {
   reader    Reader   @relation(fields: [readerId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  counter  Int      @default(1)
 }

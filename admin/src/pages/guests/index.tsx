@@ -1,4 +1,5 @@
 import Button from "@/components/Button";
+import EmptyState from "@/components/EmptyState";
 import PageLayout from "@/components/PageLayout";
 import Section from "@/components/Section";
 import Table, { GuestTableRow } from "@/components/Table";
@@ -74,6 +75,11 @@ const Index = () => {
     setEditModalOpen(true);
   };
 
+  const handleAdd = async () => {
+    setSelectedGuest(undefined);
+    setEditModalOpen(true);
+  }
+
   return (
     <PageLayout>
       <EditGuestModal
@@ -84,30 +90,38 @@ const Index = () => {
           setEditModalOpen(false);
         }}
       />
-      <Section
-        title="Guests"
-        description="Here you can configure the connected guests."
-        button={
-          <Button
-            caption="Create new guest"
-            onClick={() => {
-              setSelectedGuest(undefined);
-              setEditModalOpen(true);
-            }}
+
+      {data && data?.guests.length > 0 ? (
+        <>
+          <Section
+            title="Guests"
+            description="Here you can configure the connected guests."
+            button={
+              <Button
+                caption="Create new guest"
+                onClick={handleAdd}
+              />
+            }
           />
-        }
-      />
-      <Table headings={["Name", "Tag", "Action"]}>
-        {data?.guests.map((guest, index) => (
-          <GuestTableRow
-            key={guest.id}
-            guest={guest}
-            odd={index % 2 === 0}
-            onDelete={() => handleDelete(guest)}
-            onEdit={() => handleEdit(guest)}
-          />
-        ))}
-      </Table>
+          <Table headings={["Name", "Tag", "Action"]}>
+            {data?.guests.map((guest, index) => (
+              <GuestTableRow
+                key={guest.id}
+                guest={guest}
+                odd={index % 2 === 0}
+                onDelete={() => handleDelete(guest)}
+                onEdit={() => handleEdit(guest)}
+              />
+            ))}
+          </Table>
+        </>
+      ) : (
+        <EmptyState
+          title="No guests"
+          description="You have not created any guests yet."
+          action={{ label: "Create new guest", onClick: handleAdd }}
+        />
+      )}
     </PageLayout>
   );
 };
