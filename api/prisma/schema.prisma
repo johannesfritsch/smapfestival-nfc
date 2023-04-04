@@ -33,6 +33,7 @@ model User {
 model Guest {
   id        String   @id @default(uuid())
   tagUid    String?  @unique
+  email     String
   name      String
   entries   Entry[]
   createdAt DateTime @default(now())
@@ -47,5 +48,4 @@ model Entry {
   reader    Reader   @relation(fields: [readerId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  counter  Int      @default(1)
 }

@@ -23,6 +23,7 @@ export type CreateEntryInput = {
 };
 
 export type CreateGuestInput = {
+  email: Scalars['String'];
   name: Scalars['String'];
   tagUid?: InputMaybe<Scalars['String']>;
 };
@@ -50,6 +51,7 @@ export type EntryType = {
 
 export type GuestType = {
   __typename?: 'GuestType';
+  email: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
   tagUid?: Maybe<Scalars['ID']>;
@@ -214,6 +216,7 @@ export type SubscriptionNfcReaderUpdatedArgs = {
 };
 
 export type UpdateGuestInput = {
+  email: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
   tagUid?: InputMaybe<Scalars['String']>;
@@ -373,6 +376,7 @@ export type EntryTypeResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type GuestTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['GuestType'] = ResolversParentTypes['GuestType']> = {
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   tagUid?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;

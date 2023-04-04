@@ -167,7 +167,7 @@ export default {
 
       return true;
     },
-    createGuest: async (_, { input: { name, tagUid } }, ctx) => {
+    createGuest: async (_, { input: { name, email, tagUid } }, ctx) => {
       if (ctx.type !== "USER")
         throw new GraphQLError("You're not a user", {
           extensions: { code: "UNAUTHORIZED" },
@@ -176,6 +176,7 @@ export default {
       const guest = await db.guest.create({
         data: {
           name,
+          email,
           tagUid,
         },
       });
@@ -245,15 +246,28 @@ export default {
             tagUid,
           },
         });
-        const entry = await db.entry.create({
-          data: {
-            guestId: guest.id,
-            readerId: ctx.reader.id,
-          },
-        });
-        await pubsub.publish("ENTRY_CREATED", {
-          entryCreated: entry,
-        });
+
+        console.log('Creating entry for', guest);
+
+        try {
+          const entry = await db.entry.create({
+            data: {
+              guestId: guest.id,
+              readerId: ctx.reader.id,
+            },
+          });  
+
+          console.log('Created entry', entry);
+
+          await pubsub.publish("ENTRY_CREATED", {
+            entryCreated: entry,
+          });
+        } catch (error) {
+          console.error(error);
+        }
+        
+
+        
       }
 
       await pubsub.publish("NFC_READER_UPDATED", {

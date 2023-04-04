@@ -1,4 +1,3 @@
-import Button from "@/components/Button";
 import Form, { TagUidField, TextField } from "@/components/Form";
 import Modal from "@/components/Modal";
 import {
@@ -32,8 +31,8 @@ const EditGuestModal = ({ guest, open, onClose }: EditGuestModalProps) => {
     CreateGuestMutationVariables
   >(gql`
     ${GUEST_FRAGMENT}
-    mutation CreateGuest($name: String!, $tagUid: String) {
-      createGuest(input: { name: $name, tagUid: $tagUid }) {
+    mutation CreateGuest($name: String!, $email: String!, $tagUid: String) {
+      createGuest(input: { name: $name, email: $email, tagUid: $tagUid }) {
         ...GuestFragment
       }
     }
@@ -41,8 +40,8 @@ const EditGuestModal = ({ guest, open, onClose }: EditGuestModalProps) => {
 
   const [updateGuest] = useMutation(gql`
     ${GUEST_FRAGMENT}
-    mutation UpdateGuest($id: ID!, $name: String!, $tagUid: String) {
-      updateGuest(input: { id: $id, name: $name, tagUid: $tagUid }) {
+    mutation UpdateGuest($id: ID!, $name: String!, $email: String!, $tagUid: String) {
+      updateGuest(input: { id: $id, name: $name, email: $email, tagUid: $tagUid }) {
         ...GuestFragment
       }
     }
@@ -50,10 +49,10 @@ const EditGuestModal = ({ guest, open, onClose }: EditGuestModalProps) => {
 
   const handleFormSubmit = async () => {
     if (!workingCopy?.id) {
-      const result = await createGuest({
+      await createGuest({
         variables: {
           name: workingCopy?.name || "",
-          
+          email: workingCopy?.email || "",
           ...((workingCopy.tagUid || "").trim().length > 0 ? {tagUid: workingCopy?.tagUid || ""} : { tagUid: null }),
         },
       });
@@ -62,6 +61,7 @@ const EditGuestModal = ({ guest, open, onClose }: EditGuestModalProps) => {
         variables: {
           id: workingCopy?.id,
           name: workingCopy?.name || "",
+          email: workingCopy?.email || "",
           ...((workingCopy.tagUid || "").trim().length > 0 ? {tagUid: workingCopy?.tagUid || ""} : { tagUid: null }),
         },
       });
@@ -96,6 +96,16 @@ const EditGuestModal = ({ guest, open, onClose }: EditGuestModalProps) => {
           onChange={(val) => {
             if (workingCopy)
               setWorkingCopy(mergeDeepLeft({ name: val }, workingCopy));
+          }}
+        />
+        <TextField
+          name="email"
+          label="Guest Email"
+          placeholder="Guest Email"
+          value={workingCopy?.email || ""}
+          onChange={(val) => {
+            if (workingCopy)
+              setWorkingCopy(mergeDeepLeft({ email: val }, workingCopy));
           }}
         />
         <TagUidField

@@ -40,6 +40,7 @@ type NfcTag {
 type GuestType {
   id: ID!
   name: String!
+  email: String!
   tagUid: ID
 }
 
@@ -92,12 +93,14 @@ input CreateEntryInput {
 
 input CreateGuestInput {
   name: String!
+  email: String!
   tagUid: String
 }
 
 input UpdateGuestInput {
   id: ID!
   name: String!
+  email: String!
   tagUid: String
 }
 

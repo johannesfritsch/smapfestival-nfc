@@ -19,6 +19,7 @@ export type CreateEntryInput = {
 };
 
 export type CreateGuestInput = {
+  email: Scalars['String'];
   name: Scalars['String'];
   tagUid?: InputMaybe<Scalars['String']>;
 };
@@ -46,6 +47,7 @@ export type EntryType = {
 
 export type GuestType = {
   __typename?: 'GuestType';
+  email: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
   tagUid?: Maybe<Scalars['ID']>;
@@ -210,6 +212,7 @@ export type SubscriptionNfcReaderUpdatedArgs = {
 };
 
 export type UpdateGuestInput = {
+  email: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
   tagUid?: InputMaybe<Scalars['String']>;
