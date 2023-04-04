@@ -34,55 +34,59 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     });
 });
 
-const httpLink = authLink.concat(errorLink).concat(
-  new HttpLink({
-    uri: "http://localhost:4000/graphql",
-  })
-);
+export const createApolloClient = ({ httpApiUrl, wsApiUrl } : { httpApiUrl: string, wsApiUrl: string }) => {
+  console.log('=========== createApolloClient ==========', httpApiUrl, wsApiUrl);
 
-const createClientLink = () => {
-  const wsLink = new GraphQLWsLink(
-    createClient({
-      url: "ws://localhost:4000/graphql",
-      connectionParams: () => ({
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      }),
+  const httpLink = authLink.concat(errorLink).concat(
+    new HttpLink({
+      uri: httpApiUrl,
     })
   );
+  
+  const createClientLink = () => {
+    const wsLink = new GraphQLWsLink(
+      createClient({
+        url: wsApiUrl,
+        connectionParams: () => ({
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }),
+      })
+    );
+  
+    const splitLink = split(
+      ({ query }) => {
+        const definition = getMainDefinition(query);
+        return (
+          definition.kind === "OperationDefinition" &&
+          definition.operation === "subscription"
+        );
+      },
+      wsLink,
+      httpLink
+    );
+  
+    return authLink.concat(errorLink).concat(splitLink);
+  };
 
-  const splitLink = split(
-    ({ query }) => {
-      const definition = getMainDefinition(query);
-      return (
-        definition.kind === "OperationDefinition" &&
-        definition.operation === "subscription"
-      );
-    },
-    wsLink,
-    httpLink
-  );
-
-  return authLink.concat(errorLink).concat(splitLink);
-};
-
-export const apolloClient = new ApolloClient({
-  link: typeof window === "undefined" ? httpLink : createClientLink(),
-  cache: new InMemoryCache({
-    typePolicies: {
-      Query: {
-        fields: {
-          entries: {
-            keyArgs: false,
-            merge(existing, incoming) {
-              console.log(existing, incoming);
-              return [
-                ...(existing ? existing : []),
-                ...(incoming ? incoming : []),
-              ];
+  return new ApolloClient({
+    link: typeof window === "undefined" ? httpLink : createClientLink(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            entries: {
+              keyArgs: false,
+              merge(existing, incoming) {
+                console.log(existing, incoming);
+                return [
+                  ...(existing ? existing : []),
+                  ...(incoming ? incoming : []),
+                ];
+              },
             },
           },
         },
       },
-    },
-  }),
-});
+    }),
+  });
+};
