@@ -71,7 +71,7 @@ const Display = () => {
 
         setTimeout(() => {
           setGreetingName(undefined);
-        }, 3200);
+        }, 5000);
 
         setTimeout(() => {
           if (scanVideo.current) {
@@ -89,23 +89,28 @@ const Display = () => {
   return (
     <>
       <div className="relative h-screen">
-        <video ref={scanVideo} className="absolute left-0 top-0 z-30">
+        <video
+          ref={scanVideo}
+          className="absolute top-0 left-0 w-full h-full object-cover z-30"
+        >
           <source src="/videos/scan.webm" type="video/webm" />
         </video>
         <video
           ref={loopVideo}
-          className="absolute left-0 top-0 z-10"
+          className="absolute top-0 left-0 w-full h-full object-cover z-10"
           loop={true}
         >
           <source src="/videos/loop.webm" type="video/webm" />
         </video>
 
-        <div
-          style={{ fontFamily: "'Jost-Black', sans-serif" }}
-          className="text-black uppercase text-9xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-20"
-        >
-          <span className="">{greetingName && greetingName.split(" ")[0]}</span>
-        </div>
+        {greetingName && (
+          <div
+            style={{ fontFamily: "'Jost-Black', sans-serif" }}
+            className="text-white animate-text duration-[3700ms] leading-none uppercase text-[7vw] px-[1vw] absolute inset-0 flex items-center justify-center text-center z-20"
+          >
+            <span className="">{greetingName}</span>
+          </div>
+        )}
       </div>
       <div className="absolute top-0 right-0 m-3 z-30">
         <Link href="/">
