@@ -231,6 +231,8 @@ export type User = {
   name: Scalars['String'];
 };
 
+export type GuestFragmentFragment = { __typename?: 'GuestType', id: string, name: string, email: string, tagUid?: string | null };
+
 export type CreateGuestMutationVariables = Exact<{
   name: Scalars['String'];
   email: Scalars['String'];
@@ -256,7 +258,7 @@ export type CreateNfcReaderMutationVariables = Exact<{
 }>;
 
 
-export type CreateNfcReaderMutation = { __typename?: 'Mutation', createNfcReader: { __typename?: 'NfcReaderCreation', token: string, reader: { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string } | null } | null } } };
+export type CreateNfcReaderMutation = { __typename?: 'Mutation', createNfcReader: { __typename?: 'NfcReaderCreation', token: string, reader: { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string, email: string } | null } | null } } };
 
 export type UpdateNfcReaderMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -265,7 +267,7 @@ export type UpdateNfcReaderMutationVariables = Exact<{
 }>;
 
 
-export type UpdateNfcReaderMutation = { __typename?: 'Mutation', updateNfcReader: { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string } | null } | null } };
+export type UpdateNfcReaderMutation = { __typename?: 'Mutation', updateNfcReader: { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string, email: string } | null } | null } };
 
 export type EntryFragmentFragment = { __typename?: 'EntryType', id: string, createdAt: any };
 
@@ -274,7 +276,7 @@ export type GetAllEntriesQueryVariables = Exact<{
 }>;
 
 
-export type GetAllEntriesQuery = { __typename?: 'Query', entries: Array<{ __typename?: 'EntryType', id: string, createdAt: any, guest: { __typename?: 'GuestType', id: string, name: string, email: string, tagUid?: string | null }, reader: { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string } | null } | null } }> };
+export type GetAllEntriesQuery = { __typename?: 'Query', entries: Array<{ __typename?: 'EntryType', id: string, createdAt: any, guest: { __typename?: 'GuestType', id: string, name: string, email: string, tagUid?: string | null }, reader: { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string, email: string } | null } | null } }> };
 
 export type DeleteEntryMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -286,9 +288,7 @@ export type DeleteEntryMutation = { __typename?: 'Mutation', deleteEntry: boolea
 export type EntryCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EntryCreatedSubscription = { __typename?: 'Subscription', entryCreated: { __typename?: 'EntryType', id: string, createdAt: any } };
-
-export type GuestFragmentFragment = { __typename?: 'GuestType', id: string, name: string, email: string, tagUid?: string | null };
+export type EntryCreatedSubscription = { __typename?: 'Subscription', entryCreated: { __typename?: 'EntryType', id: string, createdAt: any, guest: { __typename?: 'GuestType', id: string, name: string, email: string, tagUid?: string | null }, reader: { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string, email: string } | null } | null } } };
 
 export type GetAllGuestsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -315,17 +315,17 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Session', token: string } };
 
-export type NfcReaderFragmentFragment = { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string } | null } | null };
+export type NfcReaderFragmentFragment = { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string, email: string } | null } | null };
 
 export type GetAllReadersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllReadersQuery = { __typename?: 'Query', readers: Array<{ __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string } | null } | null }> };
+export type GetAllReadersQuery = { __typename?: 'Query', readers: Array<{ __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string, email: string } | null } | null }> };
 
 export type NfcReaderUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NfcReaderUpdatedSubscription = { __typename?: 'Subscription', nfcReaderUpdated: { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string } | null } | null } };
+export type NfcReaderUpdatedSubscription = { __typename?: 'Subscription', nfcReaderUpdated: { __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string, email: string } | null } | null } };
 
 export type DeleteReaderMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -346,4 +346,4 @@ export type GuestEntryCreatedSubscription = { __typename?: 'Subscription', entry
 export type GetEntryReadersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEntryReadersQuery = { __typename?: 'Query', readers: Array<{ __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string } | null } | null }> };
+export type GetEntryReadersQuery = { __typename?: 'Query', readers: Array<{ __typename?: 'NfcReader', id: string, name: string, tracksEntries: boolean, lastSeenAt?: any | null, currentTag?: { __typename?: 'NfcTag', id: string, guest?: { __typename?: 'GuestType', id: string, name: string, email: string } | null } | null }> };

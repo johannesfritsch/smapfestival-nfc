@@ -5,11 +5,12 @@ import {
   CreateGuestMutationVariables,
   GuestType,
 } from "@/generated/graphql";
-import { GUEST_FRAGMENT } from "@/pages/guests";
+
 import { gql, useMutation } from "@apollo/client";
 import { ArchiveBoxArrowDownIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
 import { mergeDeepLeft } from "ramda";
+import { GUEST_FRAGMENT } from "@/fragments/guest";
 
 export type EditGuestModalProps = {
   guest: GuestType | undefined;

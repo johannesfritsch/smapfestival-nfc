@@ -25,6 +25,7 @@ export const NFC_READER_FRAGMENT = gql`
       guest {
         id
         name
+        email
       }
     }
   }

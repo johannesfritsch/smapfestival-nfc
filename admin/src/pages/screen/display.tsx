@@ -1,15 +1,15 @@
 import {
-  EntryCreatedSubscription,
-  EntryCreatedSubscriptionVariables,
   GuestEntryCreatedSubscription,
   GuestEntryCreatedSubscriptionVariables,
 } from "@/generated/graphql";
-import { gql, useApolloClient, useSubscription } from "@apollo/client";
+import { gql, useApolloClient } from "@apollo/client";
 import React, { useEffect, useRef, useState } from "react";
-import { ENTRY_FRAGMENT, SUBSCRIBE_ENTRY_CREATED } from "../entries";
-import { GUEST_FRAGMENT } from "../guests";
+import { ENTRY_FRAGMENT } from "../entries";
+
 import { XCircleIcon, SpeakerWaveIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import { GUEST_FRAGMENT } from "@/fragments/guest";
 const GUEST_ENTRY_CREATED_FRAGMENT = gql`
   ${ENTRY_FRAGMENT}
   ${GUEST_FRAGMENT}
@@ -57,7 +57,6 @@ const Display = () => {
       },
     });
     const subscr = sub.subscribe((sub) => {
-      console.log(sub);
       if (sub.data) {
         if (scanVideo.current) {
           scanVideo.current.currentTime = 0;
@@ -68,7 +67,7 @@ const Display = () => {
           if (sub.data) {
             setGreetingName(sub.data.entryCreated.guest.name);
           }
-        }, 1200);
+        }, 1300);
 
         setTimeout(() => {
           setGreetingName(undefined);
@@ -89,8 +88,8 @@ const Display = () => {
 
   return (
     <>
-      <div className="relative">
-        <video ref={scanVideo} className="absolute left-0 top-0 z-20">
+      <div className="relative h-screen">
+        <video ref={scanVideo} className="absolute left-0 top-0 z-30">
           <source src="/videos/scan.webm" type="video/webm" />
         </video>
         <video
@@ -100,11 +99,18 @@ const Display = () => {
         >
           <source src="/videos/loop.webm" type="video/webm" />
         </video>
+
+        <div
+          style={{ fontFamily: "'Jost-Black', sans-serif" }}
+          className="text-black uppercase text-9xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-20"
+        >
+          <span className="">{greetingName && greetingName.split(" ")[0]}</span>
+        </div>
       </div>
       <div className="absolute top-0 right-0 m-3 z-30">
-        <a href="/">
-          <XCircleIcon className="w-10 h-10 text-gray-300 cursor-pointer" />
-        </a>
+        <Link href="/">
+          <XCircleIcon className="w-10 h-10 text-gray-300 cursor-pointer opacity-10 hover:opacity-100" />
+        </Link>
         <a
           onClick={() => {
             if (scanVideo.current) {
@@ -112,17 +118,9 @@ const Display = () => {
             }
           }}
         >
-          <SpeakerWaveIcon className="w-10 h-10 text-gray-300 cursor-pointer" />
+          <SpeakerWaveIcon className="w-10 h-10 text-gray-300 cursor-pointer opacity-10 hover:opacity-100" />
         </a>
       </div>
-      {greetingName && (
-        <div
-          style={{ fontFamily: "'Jost', sans-serif" }}
-          className="text-white uppercase text-9xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-30"
-        >
-          <span className="">{greetingName.split(' ')[0]}</span>
-        </div>
-      )}
     </>
   );
 };

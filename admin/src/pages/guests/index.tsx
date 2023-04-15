@@ -3,6 +3,7 @@ import EmptyState from "@/components/EmptyState";
 import PageLayout from "@/components/PageLayout";
 import Section from "@/components/Section";
 import Table, { GuestTableRow } from "@/components/Table";
+import { GUEST_FRAGMENT } from "@/fragments/guest";
 import {
   GetAllGuestsQuery,
   GetAllGuestsQueryVariables,
@@ -13,15 +14,6 @@ import {
 import EditGuestModal from "@/modals/EditGuestModal";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import React from "react";
-
-export const GUEST_FRAGMENT = gql`
-  fragment GuestFragment on GuestType {
-    id
-    name
-    email
-    tagUid
-  }
-`;
 
 const GET_ALL_GUESTS = gql`
   ${GUEST_FRAGMENT}

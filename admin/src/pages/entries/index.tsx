@@ -11,8 +11,9 @@ import {
 import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import React, { useEffect } from "react";
 import { NFC_READER_FRAGMENT } from "../readers";
-import { GUEST_FRAGMENT } from "../guests";
+
 import EmptyState from "@/components/EmptyState";
+import { GUEST_FRAGMENT } from "@/fragments/guest";
 
 export const ENTRY_FRAGMENT = gql`
   fragment EntryFragment on EntryType {
@@ -45,10 +46,18 @@ const DELETE_ENTRY = gql`
 `;
 
 export const SUBSCRIBE_ENTRY_CREATED = gql`
+  ${GUEST_FRAGMENT}
   ${ENTRY_FRAGMENT}
+  ${NFC_READER_FRAGMENT}
   subscription EntryCreated {
     entryCreated {
       ...EntryFragment
+      guest {
+        ...GuestFragment
+      }
+      reader {
+        ...NfcReaderFragment
+      }
     }
   }
 `;

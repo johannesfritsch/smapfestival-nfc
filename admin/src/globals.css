@@ -1,6 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Jost-Black";
+  src: url("/fonts/Jost-Black.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
