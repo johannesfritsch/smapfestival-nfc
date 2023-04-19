@@ -183,7 +183,7 @@ export default {
 
       return guest;
     },
-    updateGuest: async (_, { input: { id, name, tagUid } }, ctx) => {
+    updateGuest: async (_, { input: { id, name, email, tagUid } }, ctx) => {
       if (ctx.type !== "USER")
         throw new GraphQLError("You're not a user", {
           extensions: { code: "UNAUTHORIZED" },
@@ -195,6 +195,7 @@ export default {
         },
         data: {
           name,
+          email,
           tagUid,
         },
       });
